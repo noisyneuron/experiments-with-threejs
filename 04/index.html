@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script type="text/javascript" src="../three.min.js"></script>
+  <script type="text/javascript" src="../OrbitControls.js"></script>
+  <style type="text/css">
+    * {
+      margin:  0; padding:  0;
+    }
+  </style>
+  <script type="text/x-glsl" id="vertex">
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
+
+    uniform float time;
+    #define NUM_OCTAVES 5
+
+    //  <https://www.shadertoy.com/view/4dS3Wd>
+    //  By Morgan McGuire @morgan3d, http://graphicscodex.com
+    //
+    float hash(float n) { return fract(sin(n) * 1e4); }
+    float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
+
+    float noise(vec3 x) {
+      const vec3 step = vec3(110, 241, 171);
+
+      vec3 i = floor(x);
+      vec3 f = fract(x);
+     
+      // For performance, compute the base input to a 1D hash from the integer part of the argument and the 
+      // incremental change to the 1D based on the 3D -> 1D wrapping
+        float n = dot(i, step);
+
+      vec3 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(mix( hash(n + dot(step, vec3(0, 0, 0))), hash(n + dot(step, vec3(1, 0, 0))), u.x),
+                       mix( hash(n + dot(step, vec3(0, 1, 0))), hash(n + dot(step, vec3(1, 1, 0))), u.x), u.y),
+                   mix(mix( hash(n + dot(step, vec3(0, 0, 1))), hash(n + dot(step, vec3(1, 0, 1))), u.x),
+                       mix( hash(n + dot(step, vec3(0, 1, 1))), hash(n + dot(step, vec3(1, 1, 1))), u.x), u.y), u.z);
+    }
+
+    // uniform float uSphereRadius2; // squared
+    float fbm(vec3 x) {
+      float v = 0.0;
+      float a = 0.5;
+      vec3 shift = vec3(100);
+      for (int i = 0; i < NUM_OCTAVES; ++i) {
+        v += a * noise(x);
+        x = x * 2.0 + shift;
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    void main() {
+      vec3 pos = position;
+      vNormal = normalize( normalMatrix * normal );
+      pos += noise(pos*0.04+time) * 10. * vNormal;
+      vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
+      vViewPosition = -mvPosition.xyz;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
+    }
+  </script>
+
+
+
+  <script type="text/x-glsl" id="fragment">
+    uniform vec3 uMaterialColor;
+    uniform vec3 uSpecularColor;
+
+    uniform vec3 uDirLightPos;
+    uniform vec3 uDirLightColor;
+
+    uniform float uKd;
+    uniform float uKs;
+    uniform float shininess;
+
+    uniform float uDropoff;
+    varying vec3 vNormal;
+    varying vec3 vViewPosition;
+    uniform float time;
+    #define NUM_OCTAVES 2
+
+    //  <https://www.shadertoy.com/view/4dS3Wd>
+    //  By Morgan McGuire @morgan3d, http://graphicscodex.com
+    //
+    float hash(float n) { return fract(sin(n) * 1e4); }
+    float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
+
+    float noise(vec3 x) {
+      const vec3 step = vec3(110, 241, 171);
+
+      vec3 i = floor(x);
+      vec3 f = fract(x);
+     
+      // For performance, compute the base input to a 1D hash from the integer part of the argument and the 
+      // incremental change to the 1D based on the 3D -> 1D wrapping
+        float n = dot(i, step);
+
+      vec3 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(mix( hash(n + dot(step, vec3(0, 0, 0))), hash(n + dot(step, vec3(1, 0, 0))), u.x),
+                       mix( hash(n + dot(step, vec3(0, 1, 0))), hash(n + dot(step, vec3(1, 1, 0))), u.x), u.y),
+                   mix(mix( hash(n + dot(step, vec3(0, 0, 1))), hash(n + dot(step, vec3(1, 0, 1))), u.x),
+                       mix( hash(n + dot(step, vec3(0, 1, 1))), hash(n + dot(step, vec3(1, 1, 1))), u.x), u.y), u.z);
+    }
+
+    // uniform float uSphereRadius2; // squared
+    float fbm(vec3 x) {
+      float v = 0.0;
+      float a = 0.5;
+      vec3 shift = vec3(100);
+      for (int i = 0; i < NUM_OCTAVES; ++i) {
+        v += a * noise(x);
+        x = x * 2.0 + shift;
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    void main() {
+      vec3 col = uMaterialColor * fbm(mod(time+8.,200.)*0.3*vViewPosition*0.01);
+      // compute direction to light
+      vec4 lDirection = viewMatrix * vec4( uDirLightPos, 0.0 );
+      vec3 lVector = normalize( lDirection.xyz );
+
+      vec3 normal = normalize( vNormal );
+      
+      // diffuse: N * L. Normal must be normalized, since it's interpolated.
+      float diffuse = max( dot( normal, lVector ), 0.0);
+
+      // This can give a hard termination to the highlight, but it's better than some weird sparkle.
+      if (diffuse <= 0.0) {
+        return;
+      }
+
+      gl_FragColor.rgb = uKd * col * uDirLightColor * diffuse;
+
+      vec3 viewPosition = normalize( vViewPosition );
+      vec3 pointHalfVector = normalize( lVector + viewPosition );
+      float pointDotNormalHalf = max( dot( normal, pointHalfVector ), 0.0 );
+      float specular = pow( pointDotNormalHalf, shininess );
+      specular *= diffuse*(2.0 + shininess)/8.0;
+      
+      // Student: add test here, when specular < uDropoff, set to 0.0, else to 1.0
+      // specular = specular < uDropoff ? 0. : 1.;
+      gl_FragColor.rgb += uDirLightColor * uSpecularColor * uKs * specular;
+    }
+  </script>
+</head>
+
+<body>
+  <script type="text/javascript" src="script.js"></script>
+</body>
+</html>
