@@ -7,7 +7,7 @@
       margin: 0; padding: 0;
       box-sizing: border-box;
     }
-    a {
+    a.thumb {
       display: block;
       width:  50%;
       float:  left;
@@ -19,10 +19,10 @@
       background-repeat: no-repeat;
       background-size:  cover;
     }
-    a:hover {
+    a.thumb:hover {
       filter:  grayscale(0);
     }
-    div {
+    a.thumb div {
       position: absolute;
       top: 0;
       background-position: center;
@@ -31,38 +31,54 @@
       width:  100%;
       height: 100%;
     }
+    a#source-link {
+      display: block;
+      position: fixed;
+      z-index: 10;
+      background-color: rgba(40,40,40,0.8);
+      color: white;
+      padding: 1rem;
+      text-decoration: none;
+      font-family: sans-serif;
+      bottom: 1rem;
+      right: 1rem;
+    }
   </style>
 </head>
 <body>
 
-  <a href="01/">
+  <a class="thumb" href="01/">
     <div style="background-image: url(thumbnails/01.png);"></div>
     <!-- <img src="thumbnails/01.png"/> -->
   </a>
 
-  <a href="02/">
+  <a class="thumb" href="02/">
     <div style="background-image: url(thumbnails/02.png);"></div>
     <!-- <img src="thumbnails/02.png"/> -->
   </a>
 
-  <a href="03/">
+  <a class="thumb" href="03/">
     <div style="background-image: url(thumbnails/03.png);"></div>
     <!-- <img src="thumbnails/03.png"/> -->
   </a>
 
-  <a href="04/">
+  <a class="thumb" href="04/">
     <div style="background-image: url(thumbnails/04.png);"></div>
     <!-- <img src="thumbnails/04.png"/> -->
   </a>
 
-  <a href="05/">
+  <a class="thumb" href="05/">
     <div style="background-image: url(thumbnails/05.png);"></div>
     <!-- <img src="thumbnails/05.png"/> -->
   </a>
 
-  <a href="06/">
+  <a class="thumb" href="06/">
     <div style="background-image: url(thumbnails/06.png);"></div>
     <!-- <img src="thumbnails/06.png"/> -->
+  </a>
+
+  <a id="source-link" href="https://github.com/noisyneuron/experiments-with-threejs">
+    View Source
   </a>
 
 </body>
