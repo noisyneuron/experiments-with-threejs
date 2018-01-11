@@ -18,7 +18,6 @@ function init() {
   // scene.add( ambientLight );
 
   var material = new THREE.MeshBasicMaterial({ 
-    shading: THREE.FlatShading,
     vertexColors: THREE.VertexColors
   });
 
@@ -26,9 +25,9 @@ function init() {
 
   for(var i=0;i<geometry.faces.length; i++) {
     var f = geometry.faces[i];
-      f.vertexColors[0] = new THREE.Color(0,1,0 );
-      f.vertexColors[1] = new THREE.Color(1,0,0);
-      f.vertexColors[2] = new THREE.Color(0,0,1);
+      f.vertexColors[0] = new THREE.Color(0,1,0);
+      f.vertexColors[1] = new THREE.Color(0,0.615,0);
+      f.vertexColors[2] = new THREE.Color(0,0.213,0);
   }
 
   mesh = new THREE.Mesh(geometry, material);
@@ -57,12 +56,13 @@ function animate() {
 function render() {
   raycaster.setFromCamera( mouse, camera );
   var intersects = raycaster.intersectObject(mesh);
+  mesh.rotation.y += 0.01;
   if(intersects.length > 0) {
     var intersect = intersects[ 0 ];
     var face = intersect.face;
-    face.vertexColors[0].setRGB( Math.random(), 0.5, 0.5 );
-    face.vertexColors[1].setRGB( Math.random(), 0.5, 0.5 );
-    face.vertexColors[2].setRGB( Math.random(), 0.5, 0.5 );
+    face.vertexColors[0].setRGB(0,0,1);
+    face.vertexColors[1].setRGB(0,0,0.615);
+    face.vertexColors[2].setRGB(0,0,0.213);
     mesh.geometry.colorsNeedUpdate = true;
     mesh.material.needsUpdate = true;
     mesh.geometry.verticesNeedUpdate = true;
