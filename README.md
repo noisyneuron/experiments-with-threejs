@@ -2,9 +2,9 @@
 
 View demos [here](http://experiments.playdo.io/threejs)
 
-* 01: Environment maps, rotation and translation
-* 02: Shadows, lights
-* 03: Mesh deformation, vertex animation
-* 04: Vertex and fragment shaders, noise deformation and texturing, orbit controls
-* 05: Loading animated model, orbit controls
-* 06: Vertex colouring, mouse interaction
+* __01__: Environment map, rotation and translation
+* __02__: Shadows, lights
+* __03__: Mesh deformation, vertex animation
+* __04__: Vertex and fragment shaders, noise deformation and texturing, orbit controls
+* __05__: Loading animated model, orbit controls
+* __06__: Vertex colouring, mouse interaction
