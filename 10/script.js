@@ -48,8 +48,6 @@ function init() {
 
   // SCENE
   scene = new THREE.Scene();
-  // scene.background = new THREE.Color( 0xefd1b5 );
-  // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0004 );
 
   // CAMERA & CONTROLS
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
@@ -78,13 +76,8 @@ function init() {
 
   geometry.computeVertexNormals();
   geometry.computeFaceNormals(); 
-  texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
-  texture.wrapS = THREE.ClampToEdgeWrapping;
-  texture.wrapT = THREE.ClampToEdgeWrapping;
 
   var material = createShaderMaterial();
-  // console.log(uniforms.time.value);
-  // mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({color: 0xff0000}) );
   mesh = new THREE.Mesh(geometry, material);  
   mesh.receiveShadow = true;
   mesh.castShadow = true;

@@ -17,7 +17,15 @@
     varying vec2 vUv;
     varying vec3 pos;
     uniform float time;
-    #define NUM_OCTAVES 2
+    #define NUM_OCTAVES 5
+
+    float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+    float noise1d(float p){
+      float fl = floor(p);
+      float fc = fract(p);
+      return mix(rand(fl), rand(fl + 1.0), fc);
+    }
 
     //  <https://www.shadertoy.com/view/4dS3Wd>
     //  By Morgan McGuire @morgan3d, http://graphicscodex.com
@@ -58,9 +66,25 @@
     void main() {
       vUv = uv;
       pos = position;
+
+      float nIndex = time*0.3;
+      float h = fbm(vec3(pos.x*0.001+nIndex, pos.y*0.002, pos.z*0.003));
+      // vec3 origPos = position;
       
-      pos.y = pos.y + fbm(fbm(position*0.001)+position*vec3(sin(time*0.1)*0.01,0.002,0.003))*1600.;
-      vNormal = normalize( normalMatrix * normal );
+      // pos.x = mod(pos.x+time, 8500.);
+      // pos.z = mod(pos.z+time, 8500.);
+      // pos.x += time*1000.;//vec3( noise1d(time*0.8)*10., 0, noise1d(time*0.63)*10.);
+      // pos.z += time*1000.;
+
+      // float n = 0.;//mod(abs(sin(time*0.1)*0.1), noise(pos*0.01)*10000.);
+      // n += fbm(n + pos*0.001);
+      // n += fbm(n + pos*0.003 );
+      // n 
+      // n += 0.3 + fbm(pos + n*n*0.3);
+      pos.y += h*800.;
+
+      vec3 norm = normal+vec3(noise1d(pos.x*0.01), noise1d(pos.y*0.014), noise1d(pos.z*0.02));
+      vNormal = normalize( normalMatrix * norm );
       vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
       vViewPosition = -mvPosition.xyz;
       gl_Position = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
@@ -129,9 +153,9 @@
     void main() {
       vec3 st = vec3(pos.x/6000., pos.y/750., pos.z/6000.);
       st = (st + 1.)*0.5 ;
-      st.y += st.x+st.z+time*0.2;
+      // st.y += st.x+time*0.02;
       float d = length(1.-fract(st.y*2.));
-      vec3 col = vec3(d*0.3, d*d, d*0.92);
+      vec3 col = vec3(abs(sin(st.x+time)), st.y, st.z);//vec3(d*0.3, d*d, d*0.92);
 
       // compute direction to light
       vec4 lDirection = viewMatrix * vec4( uDirLightPos, 0.0 );

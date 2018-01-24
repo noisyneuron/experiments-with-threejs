@@ -53,11 +53,9 @@ function init() {
 
   // CAMERA & CONTROLS
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.set(6000,00,00);
-  // camera.up = new THREE.Vector3(0,0,1);
-  camera.lookAt(new THREE.Vector3(0,0,0));
-
-  // camera.rotation.set(0,0,0);
+  camera.position.set(6000,-1500,100);
+  camera.lookAt(new THREE.Vector3(0.,0.,0.));
+  // camera.rotation.set(-0.5, .7, 40.4);
   controls = new THREE.OrbitControls( camera );
 
   // LIGHTS
@@ -195,10 +193,6 @@ function animate() {
 }
 
 function render() {
-  // camera.up = new THREE.Vector3(0,1,0);
-  // camera.lookAt(new THREE.Vector3(0,0,0));
-  // controls.update( );
-  // scene.fog.color.setHSL( 0.1, 0.5, 1 );
   uniforms.time.value += clock.getDelta();
   renderer.render( scene, camera );
 }
