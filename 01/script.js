@@ -79,6 +79,7 @@ function init() {
 
   renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.vr.enabled = true;
   document.body.appendChild( renderer.domElement );
 
 }
