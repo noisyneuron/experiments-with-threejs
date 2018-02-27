@@ -1,4 +1,4 @@
-var container;
+var container, canvas;
 var camera, controls, scene, renderer, light;
 
 var mesh, texture;
@@ -8,6 +8,9 @@ worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 
 var uniforms;
+
+// var capturer = new CCapture({format: 'webm'});
+var recording = false;
 
 init();
 animate();
@@ -57,6 +60,8 @@ function init() {
   camera.lookAt(new THREE.Vector3(0.,0.,0.));
   // camera.rotation.set(-0.5, .7, 40.4);
   controls = new THREE.OrbitControls( camera );
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.9;
 
   // LIGHTS
   light = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -96,8 +101,17 @@ function init() {
   renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.shadowMap.enabled = true;
   container.innerHTML = "";
-  container.appendChild( renderer.domElement );
+  canvas = renderer.domElement;
+  container.appendChild( canvas );
   window.addEventListener( 'resize', onWindowResize, false );
+  // window.addEventListener( 'keyup', toggleVideo, false );
+}
+
+function toggleVideo(e) {
+  // if(e.keyCode == 32) {
+  //   if(recording) { capturer.save(); }
+  //   else { capturer.start(); recording = true; }
+  // }
 }
 
 function onWindowResize() {
@@ -195,4 +209,6 @@ function animate() {
 function render() {
   uniforms.time.value += clock.getDelta();
   renderer.render( scene, camera );
+  controls.update();
+  // capturer.capture( canvas );
 }

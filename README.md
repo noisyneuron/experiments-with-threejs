@@ -12,3 +12,5 @@ View demos [here](http://experiments.playdo.io/threejs)
 * __08__: Animated camera with Tween.js
 * __09__: Object3D
 * __10__: Terrain, BufferGeometry, fragment shader
+
+[ possibly some unnecessary code in here. to be cleaned. ]
